@@ -65,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen>
     _textController.forward();
 
     await Future.delayed(const Duration(milliseconds: 2500));
-    if (mounted) context.go('/onboaring');
+    if (mounted) context.go('/onboarding');
   }
 
   @override
