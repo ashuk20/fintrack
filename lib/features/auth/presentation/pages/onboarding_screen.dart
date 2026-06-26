@@ -88,7 +88,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       child: BlocListener<OnboardingBloc, OnboardingState>(
         listenWhen: (previous, current) => current.isDone != previous.isDone,
         listener: (context, state) {
-          if (state.isDone) context.go('/login');
+          if (state.isDone) context.go('/welcome');
         },
         child: BlocBuilder<OnboardingBloc, OnboardingState>(
           builder: (context, state) {
@@ -172,7 +172,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                   ),
                                   child: const Text(
                                     'Back',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
