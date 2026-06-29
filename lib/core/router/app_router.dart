@@ -3,6 +3,7 @@ import 'package:fintrack/features/auth/presentation/pages/onboarding_screen.dart
 import 'package:fintrack/features/auth/presentation/pages/signup_screen.dart';
 import 'package:fintrack/features/auth/presentation/pages/splash_screen.dart';
 import 'package:fintrack/features/auth/presentation/pages/welcome_screen.dart';
+import 'package:fintrack/features/dashboard/pages/dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
@@ -19,5 +20,6 @@ final appRouter = GoRouter(
     ),
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
+    GoRoute(path: '/dashboard', builder: (context, state) => DashboardScreen()),
   ],
 );

@@ -25,12 +25,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLoginWithEmail>((event, emit) async {
       emit(state.copyWith(status: AuthStatus.loading));
       try {
+         print('state emai : ${state}');
         await _firebaseAuth.signInWithEmailAndPassword(
           email: state.email.trim(),
           password: state.password.trim(),
         );
         emit(state.copyWith(status: AuthStatus.success));
       } on FirebaseAuthException catch (e) {
+        print('Firebase error code : ${e.code}');
+        print('Firebase error message : ${e.message}');
         emit(
           state.copyWith(
             status: AuthStatus.failure,
@@ -53,9 +56,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
+        print('credential credential: ${credential}');
         await _firebaseAuth.signInWithCredential(credential);
         emit(state.copyWith(status: AuthStatus.success));
       } catch (e) {
+        print('Error auth: ${e}');
         emit(
           state.copyWith(
             status: AuthStatus.failure,
@@ -78,8 +83,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return 'This account has been disabled.';
       case 'too-many-requests':
         return 'Too many attempts. Please try again later.';
+      case 'invalid-credential':
+        return 'Email or Password is incorrect.Please try again later.';
+      case 'network-request-failed':
+        return 'No internet connection.Please check yournetwork';
       default:
-        return 'Something went wrong. Please try again.';
+        return 'Something went wrong. Please try again. ${code}';
     }
   }
 }
