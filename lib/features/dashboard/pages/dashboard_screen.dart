@@ -59,6 +59,17 @@ class _DashboardView extends StatelessWidget {
         },
       ),
       bottomNavigationBar: _buildBottomNav(context),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.go('/add-transaction'),
+        backgroundColor: const Color(0xFFD4AF37),
+        child: const Icon(
+          Icons.add_rounded,
+          color: Color(0xFF0A1628),
+          size: 28,
+        ),
+        mini: true,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -331,7 +342,7 @@ class _DashboardView extends StatelessWidget {
           ...state.recentTransactions.map((txn) => _buildTransactionItem(txn)),
       ],
     );
-  }
+  } 
 
   Widget _buildTransactionItem(TransactionModel txn) {
     final formatter = NumberFormat.currency(
@@ -339,16 +350,40 @@ class _DashboardView extends StatelessWidget {
       symbol: '₹',
       decimalDigits: 0,
     );
-    final categoryIcons = {
-      'Food': '🍔',
-      'Shopping': '🛒',
-      'Transport': '🚗',
-      'Bills': '⚡',
-      'Salary': '💰',
-      'Health': '💊',
-      'Entertainment': '🎬',
-      'Other': '📦',
+    final categoryStyle = {
+      'Shopping': {
+        'icon': Icons.shopping_cart_rounded,
+        'color': const Color(0xFF9C27B0),
+      },
+      'Food': {
+        'icon': Icons.restaurant_rounded,
+        'color': const Color(0xFFFF9800),
+      },
+      'Transport': {
+        'icon': Icons.directions_car_rounded,
+        'color': const Color(0xFF2196F3),
+      },
+      'Bills': {'icon': Icons.bolt_rounded, 'color': const Color(0xFFFFC107)},
+      'Health': {
+        'icon': Icons.medical_services_rounded,
+        'color': const Color(0xFFE91E63),
+      },
+      'Entertainment': {
+        'icon': Icons.movie_rounded,
+        'color': const Color(0xFF673AB7),
+      },
+      'Salary': {
+        'icon': Icons.account_balance_wallet_rounded,
+        'color': const Color(0xFF4CAF50),
+      },
+      'Other': {
+        'icon': Icons.category_rounded,
+        'color': const Color(0xFF607D8B),
+      },
     };
+    final style = categoryStyle[txn.category] ?? categoryStyle['Other']!;
+    final catIcon = style['icon'] as IconData;
+    final catColor = style['color'] as Color;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
@@ -362,17 +397,10 @@ class _DashboardView extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: txn.isIncome
-                  ? const Color(0xFF4CAF50).withOpacity(0.1)
-                  : const Color(0xFFef5350).withOpacity(0.1),
+              color: catColor.withOpacity(0.12),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Center(
-              child: Text(
-                categoryIcons[txn.category] ?? '📦',
-                style: const TextStyle(fontSize: 18),
-              ),
-            ),
+            child: Center(child: Icon(catIcon, color: catColor, size: 19)),
           ),
           const SizedBox(width: 12),
           Expanded(
