@@ -1,3 +1,4 @@
+import 'package:fintrack/core/shell/shell_screen.dart';
 import 'package:fintrack/features/auth/presentation/pages/login_screen.dart';
 import 'package:fintrack/features/auth/presentation/pages/onboarding_screen.dart';
 import 'package:fintrack/features/auth/presentation/pages/signup_screen.dart';
@@ -22,14 +23,30 @@ final appRouter = GoRouter(
     ),
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
-    GoRoute(path: '/dashboard', builder: (context, state) => DashboardScreen()),
     GoRoute(
       path: '/add-transaction',
       builder: (context, state) => const AddTransactionScreen(),
     ),
-     GoRoute(
-      path: '/transaction',
-      builder: (context, state) => const TransactionScreen(),
+    ShellRoute(
+      builder: (context, state, child) => ShellScreen(child: child),
+      routes: [
+        GoRoute(
+          path: '/dashboard',
+          builder: (context, state) => const DashboardScreen(),
+        ),
+        GoRoute(
+          path: '/transaction',
+          builder: (context, state) => const TransactionScreen(),
+        ),
+        GoRoute(
+          path: '/budget',
+          builder: (context, state) => const TransactionScreen(),
+        ),
+        GoRoute(
+          path: '/profile',
+          builder: (context, state) => const TransactionScreen(),
+        ),
+      ],
     ),
   ],
 );

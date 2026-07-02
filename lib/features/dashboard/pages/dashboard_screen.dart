@@ -58,7 +58,6 @@ class _DashboardView extends StatelessWidget {
           );
         },
       ),
-      bottomNavigationBar: _buildBottomNav(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.go('/add-transaction'),
         backgroundColor: const Color(0xFFD4AF37),
