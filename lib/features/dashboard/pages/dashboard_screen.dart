@@ -320,7 +320,7 @@ class _DashboardView extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () => context.go('/transactions'),
+              onTap: () => context.go('/transaction'),
               child: const Text(
                 'See all',
                 style: TextStyle(color: Color(0xFFD4AF37), fontSize: 13),
@@ -527,7 +527,7 @@ class _DashboardView extends StatelessWidget {
               context.go('/dashboard');
               break;
             case 1:
-              context.go('/transactions');
+              context.go('/transaction');
               break;
             case 2:
               context.go('/budget');

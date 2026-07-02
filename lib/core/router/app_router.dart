@@ -5,6 +5,7 @@ import 'package:fintrack/features/auth/presentation/pages/splash_screen.dart';
 import 'package:fintrack/features/auth/presentation/pages/welcome_screen.dart';
 import 'package:fintrack/features/dashboard/pages/dashboard_screen.dart';
 import 'package:fintrack/features/transactions/presentation/pages/add_transaction_screen.dart';
+import 'package:fintrack/features/transactions/presentation/pages/transaction_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
@@ -25,6 +26,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/add-transaction',
       builder: (context, state) => const AddTransactionScreen(),
+    ),
+     GoRoute(
+      path: '/transaction',
+      builder: (context, state) => const TransactionScreen(),
     ),
   ],
 );
