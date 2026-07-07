@@ -42,7 +42,7 @@ class _DashboardView extends StatelessWidget {
                     const SizedBox(height: 20),
                     _buildBalanceCard(state),
                     const SizedBox(height: 20),
-                    _buildChartSection(state),
+                    _buildChartSection(state, context),
                     const SizedBox(height: 20),
                     _buildRecentTransactions(context, state),
                     const SizedBox(height: 100),
@@ -236,7 +236,7 @@ class _DashboardView extends StatelessWidget {
     );
   }
 
-  Widget _buildChartSection(DashboardState state) {
+  Widget _buildChartSection(DashboardState state, BuildContext context) {
     return Column(
       children: [
         Row(
@@ -250,34 +250,147 @@ class _DashboardView extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            Text(
-              'See all',
-              style: TextStyle(color: const Color(0xFFD4AF37), fontSize: 13),
+            GestureDetector(
+              onTap: () => context.go('/transaction'),
+              child: Text(
+                'See all',
+                style: TextStyle(color: const Color(0xFFD4AF37), fontSize: 13),
+              ),
             ),
           ],
         ),
         const SizedBox(height: 12),
         Container(
-          height: 120,
-          padding: const EdgeInsets.all(16),
+          height: 160,
+          padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.04),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              _buildBar('Jan', 0.4),
-              _buildBar('Feb', 0.6),
-              _buildBar('Mar', 0.3),
-              _buildBar('Apr', 0.7),
-              _buildBar('May', 0.5),
-              _buildBar('Jun', 0.9, isActive: true),
-            ],
-          ),
+          child: state.monthlyData.isEmpty
+              ? Center(
+                  child: Text(
+                    'No data yet',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.3),
+                      fontSize: 13,
+                    ),
+                  ),
+                )
+              : _buildBarChart(state, context),
         ),
       ],
+    );
+  }
+
+  Widget _buildBarChart(DashboardState state, BuildContext context) {
+    final maxExpense = state.monthlyData
+        .map((m) => m.expense)
+        .reduce((a, b) => a > b ? a : b);
+
+    final safeMax = maxExpense == 0 ? 1.0 : maxExpense;
+    final now = DateTime.now();
+    final monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: state.monthlyData.map((data) {
+        final isCurrentMonth = data.month == monthNames[now.month - 1];
+        final isSelected = isCurrentMonth || state.selectedMonth == data.month;
+        final barHeight = (data.expense / safeMax) * 90;
+        return GestureDetector(
+          onTap: () =>
+              context.read<DashboardBloc>().add(DashboardBarTapped(data.month)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (isSelected && data.expense > 0)
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: isSelected ? 1.0 : 0.0,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD4AF37).withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: const Color(0xFFD4AF37).withOpacity(0.4),
+                        width: 0.5,
+                      ),
+                    ),
+                    child: Text(
+                      '${(data.expense / 1000).toStringAsFixed(1)}k',
+                      style: const TextStyle(
+                        color: Color(0xFFD4AF37),
+                        fontSize: 8,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              if (isSelected && data.expense == 0)
+                Text(
+                  '₹0',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.3),
+                    fontSize: 8,
+                  ),
+                ),
+              const SizedBox(height: 4),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+                width: isSelected ? 32 : 28,
+                height: barHeight < 6 ? 6 : barHeight,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? const Color(0xFFD4AF37)
+                      : const Color(0xFFD4AF37).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(6),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: const Color(0xFFD4AF37).withOpacity(0.4),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                data.month,
+                style: TextStyle(
+                  color: isSelected
+                      ? Colors.white
+                      : Colors.white.withOpacity(0.25),
+                  fontSize: 10,
+                  fontWeight: isSelected
+                      ? FontWeight.w600
+                      : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -341,7 +454,7 @@ class _DashboardView extends StatelessWidget {
           ...state.recentTransactions.map((txn) => _buildTransactionItem(txn)),
       ],
     );
-  } 
+  }
 
   Widget _buildTransactionItem(TransactionModel txn) {
     final formatter = NumberFormat.currency(

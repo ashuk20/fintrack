@@ -7,6 +7,7 @@ import 'package:fintrack/features/auth/presentation/pages/welcome_screen.dart';
 import 'package:fintrack/features/dashboard/pages/dashboard_screen.dart';
 import 'package:fintrack/features/transactions/presentation/pages/add_transaction_screen.dart';
 import 'package:fintrack/features/transactions/presentation/pages/transaction_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
@@ -32,15 +33,67 @@ final appRouter = GoRouter(
       routes: [
         GoRoute(
           path: '/dashboard',
-          builder: (context, state) => const DashboardScreen(),
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const DashboardScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+            transitionDuration: const Duration(milliseconds: 300),
+          ),
+          // builder: (context, state) => const DashboardScreen(),
         ),
         GoRoute(
           path: '/transaction',
-          builder: (context, state) => const TransactionScreen(),
+          // builder: (context, state) => const TransactionScreen(),
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const TransactionScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  const begin = Offset(1, 0);
+                  const end = Offset.zero;
+                  final tween = Tween(
+                    begin: begin,
+                    end: end,
+                  ).chain(CurveTween(curve: Curves.easeInOut));
+                  return SlideTransition(
+                    position: animation.drive(tween),
+                    child: child,
+                  );
+                },
+            transitionDuration: const Duration(milliseconds: 300),
+          ),
         ),
         GoRoute(
           path: '/budget',
-          builder: (context, state) => const TransactionScreen(),
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const TransactionScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  final slideAnimation =
+                      Tween(
+                        begin: const Offset(0.15, 0),
+                        end: Offset.zero,
+                      ).animate(
+                        CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.easeOutCubic,
+                        ),
+                      );
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: slideAnimation,
+                      child: child,
+                    ),
+                  );
+                },
+            transitionDuration: const Duration(milliseconds: 350),
+          ),
+          // builder: (context, state) => const TransactionScreen(),
         ),
         GoRoute(
           path: '/profile',

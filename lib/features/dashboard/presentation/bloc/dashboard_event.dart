@@ -8,3 +8,7 @@ class DashboardStarted extends DashboardEvent {}
 //fired when user pulls to  refresh
 class DashboardRefreshed extends DashboardEvent {}
 
+class DashboardBarTapped extends DashboardEvent {
+  final String month;
+  DashboardBarTapped(this.month);
+}
